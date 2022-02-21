@@ -13,6 +13,8 @@ import (
 
 var (
 	ErrInvalidEndpoint = errors.New("invalid api endpoint")
+	ErrServer          = errors.New("airbyte server error")
+	ErrInvalidStatus   = errors.New("invalid server response status code")
 )
 
 // A client to interact with the airbyte API using HTTP
@@ -37,7 +39,7 @@ type ResponseError struct {
 	ExceptionStack              []string          `json:"exceptionStack"`
 	ValidationErrors            []ValidationError `json:"validationErrors"`
 	RootCauseExceptionClassName string            `json:"rootCauseExceptionClassName"`
-	RootCauseExceptionStack     string            `json:"rootCauseExceptionStack"`
+	RootCauseExceptionStack     []string          `json:"rootCauseExceptionStack"`
 }
 
 // The implementation of the error interface for ResponseError
@@ -63,8 +65,8 @@ func New(apiEndpoint string) (*Client, error) {
 	}, nil
 }
 
+// Makes an HTTP API request with the give data as body
 func (c *Client) makeRequest(ctx context.Context, u *url.URL, data interface{}) (*http.Response, error) {
-
 	// If the data exists encode it to json
 	var httpBodyReader io.Reader
 	if data != nil {
@@ -87,7 +89,30 @@ func (c *Client) makeRequest(ctx context.Context, u *url.URL, data interface{}) 
 		return nil, fmt.Errorf("could not execute request: %w", err)
 	}
 
-	// TODO: Handle error
+	// If response code is not 2XX return error
+	if res.StatusCode >= 300 || res.StatusCode < 200 {
+		return nil, getErrorResponse(res)
+	}
 
 	return res, nil
+}
+
+// Receives an HTTP response with a non 2XX status code
+// And returns the according error
+func getErrorResponse(res *http.Response) error {
+	if res.StatusCode >= 400 || res.StatusCode < 500 {
+		decoder := json.NewDecoder(res.Body)
+		responseError := new(ResponseError)
+		if err := decoder.Decode(responseError); err != nil {
+			return fmt.Errorf("could not decode error json: %w", err)
+		}
+
+		return responseError
+	}
+
+	if res.StatusCode >= 500 || res.StatusCode < 600 {
+		return ErrServer
+	}
+
+	return ErrInvalidStatus
 }

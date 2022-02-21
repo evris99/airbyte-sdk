@@ -62,8 +62,8 @@ type Notification struct {
 // A struct containing workspace related resources
 type Workspace struct {
 	Name                    string         `json:"name,omitempty"`
-	WorkspaceId             uuid.UUID      `json:"workspaceId,omitempty"`
-	CustomerId              uuid.UUID      `json:"customerId,omitempty"`
+	WorkspaceId             *uuid.UUID     `json:"workspaceId,omitempty"`
+	CustomerId              *uuid.UUID     `json:"customerId,omitempty"`
 	Email                   string         `json:"email,omitempty"`
 	Slug                    string         `json:"slug,omitempty"`
 	AnonymousDataCollection bool           `json:"anonymousDataCollection,omitempty"`
@@ -78,7 +78,6 @@ type Workspace struct {
 
 // Creates and returns a new workspace using the given context
 func (c *Client) CreateWorkspaceWithContext(ctx context.Context, workspace *Workspace) (*Workspace, error) {
-	// TODO: Check if name exists
 	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/create", c.endpoint.Path))
 	if err != nil {
 		return nil, err
@@ -106,13 +105,13 @@ func (c *Client) CreateWorkspace(workspace *Workspace) (*Workspace, error) {
 }
 
 // Deletes the workspace with the given UUID using the given context
-func (c *Client) DeleteWorkspaceWithContext(ctx context.Context, id uuid.UUID) error {
-	u, err := c.endpoint.Parse("/v1/workspaces/delete")
+func (c *Client) DeleteWorkspaceWithContext(ctx context.Context, id *uuid.UUID) error {
+	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/delete", c.endpoint.Path))
 	if err != nil {
 		return err
 	}
 
-	data := make(map[string]uuid.UUID)
+	data := make(map[string]*uuid.UUID)
 	data["workspaceId"] = id
 
 	res, err := c.makeRequest(ctx, u, data)
@@ -126,7 +125,7 @@ func (c *Client) DeleteWorkspaceWithContext(ctx context.Context, id uuid.UUID) e
 
 // Deletes the workspace with the given UUID.
 // Equivalent with calling DeleteWorkspaceWithContext with background as context
-func (c *Client) DeleteWorkspace(id uuid.UUID) error {
+func (c *Client) DeleteWorkspace(id *uuid.UUID) error {
 	return c.DeleteWorkspaceWithContext(context.Background(), id)
 }
 
@@ -143,13 +142,18 @@ func (c *Client) ListWorkspacesWithContext(ctx context.Context) ([]Workspace, er
 	}
 	defer res.Body.Close()
 
-	var workspaces []Workspace
+	// This is needed because the response list is contained in a workspaces object
+	var workspaces struct {
+		Workspaces []Workspace `json:"workspaces"`
+	}
+
+	// Decode JSON
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(&workspaces); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
-	return workspaces, nil
+	return workspaces.Workspaces, nil
 }
 
 // Returns all the workspaces.
@@ -159,13 +163,13 @@ func (c *Client) ListWorkspaces() ([]Workspace, error) {
 }
 
 // Returns the workspace with the given ID using the given context
-func (c *Client) FindWorkspaceByIDWithContext(ctx context.Context, id uuid.UUID) (*Workspace, error) {
+func (c *Client) FindWorkspaceByIDWithContext(ctx context.Context, id *uuid.UUID) (*Workspace, error) {
 	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/get", c.endpoint.Path))
 	if err != nil {
 		return nil, err
 	}
 
-	data := make(map[string]uuid.UUID)
+	data := make(map[string]*uuid.UUID)
 	data["workspaceId"] = id
 
 	res, err := c.makeRequest(ctx, u, data)
@@ -174,6 +178,7 @@ func (c *Client) FindWorkspaceByIDWithContext(ctx context.Context, id uuid.UUID)
 	}
 	defer res.Body.Close()
 
+	// Decode JSON
 	workspace := new(Workspace)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(workspace); err != nil {
@@ -185,7 +190,7 @@ func (c *Client) FindWorkspaceByIDWithContext(ctx context.Context, id uuid.UUID)
 
 // Returns the workspace with the given ID.
 // Equivalent with calling FindWorkspaceByIDWithContext with background as context
-func (c *Client) FindWorkspaceByID(id uuid.UUID) (*Workspace, error) {
+func (c *Client) FindWorkspaceByID(id *uuid.UUID) (*Workspace, error) {
 	return c.FindWorkspaceByIDWithContext(context.Background(), id)
 }
 
@@ -205,6 +210,7 @@ func (c *Client) FindWorkspaceBySlugWithContext(ctx context.Context, slug string
 	}
 	defer res.Body.Close()
 
+	// Decode JSON
 	workspace := new(Workspace)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(workspace); err != nil {
@@ -220,12 +226,17 @@ func (c *Client) FindWorkspaceBySlug(slug string) (*Workspace, error) {
 	return c.FindWorkspaceBySlugWithContext(context.Background(), slug)
 }
 
-// Updates the workspace using the given context. The WorkspaceId field must be included.
+// Updates the workspace using the given context. The WorkspaceId field must be included and the Name field must be empty.
 // The whole object must be passed in, even the fields that did not change
-func (c *Client) UpdateWorkspaceStateWithContext(ctx context.Context, workspace *Workspace) (*Workspace, error) {
+func (c *Client) UpdateWorkspaceStateWithContext(ctx context.Context, workspace Workspace) (*Workspace, error) {
 	if workspace.WorkspaceId.String() == "" {
 		return nil, fmt.Errorf("the workspaceId must be set")
 	}
+
+	// Omited fields
+	workspace.Name = ""
+	workspace.Slug = ""
+	workspace.CustomerId = nil
 
 	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/update", c.endpoint.Path))
 	if err != nil {
@@ -238,6 +249,7 @@ func (c *Client) UpdateWorkspaceStateWithContext(ctx context.Context, workspace 
 	}
 	defer res.Body.Close()
 
+	// Decode JSON
 	newWorkspace := new(Workspace)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(newWorkspace); err != nil {
@@ -250,12 +262,12 @@ func (c *Client) UpdateWorkspaceStateWithContext(ctx context.Context, workspace 
 // Updates the workspace. The WorkspaceId field must be included.
 // The whole object must be passed in, even the fields that did not change.
 // Equivalent with calling UpdateWorkspaceStateWithContext with background as context
-func (c *Client) UpdateWorkspaceState(workspace *Workspace) (*Workspace, error) {
+func (c *Client) UpdateWorkspaceState(workspace Workspace) (*Workspace, error) {
 	return c.UpdateWorkspaceStateWithContext(context.Background(), workspace)
 }
 
 // Updates the name of workspace with the given id using the given context
-func (c *Client) UpdateWorkspaceNameWithContext(ctx context.Context, id uuid.UUID, name string) (*Workspace, error) {
+func (c *Client) UpdateWorkspaceNameWithContext(ctx context.Context, id *uuid.UUID, name string) (*Workspace, error) {
 	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/update_name", c.endpoint.Path))
 	if err != nil {
 		return nil, err
@@ -271,6 +283,7 @@ func (c *Client) UpdateWorkspaceNameWithContext(ctx context.Context, id uuid.UUI
 	}
 	defer res.Body.Close()
 
+	// Decode JSON
 	newWorkspace := new(Workspace)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(newWorkspace); err != nil {
@@ -282,12 +295,12 @@ func (c *Client) UpdateWorkspaceNameWithContext(ctx context.Context, id uuid.UUI
 
 // Updates the name of workspace with the given id.
 // Equivalent with calling UpdateWorkspaceNameWithContext with background as context
-func (c *Client) UpdateWorkspaceName(id uuid.UUID, name string) (*Workspace, error) {
+func (c *Client) UpdateWorkspaceName(id *uuid.UUID, name string) (*Workspace, error) {
 	return c.UpdateWorkspaceNameWithContext(context.Background(), id, name)
 }
 
 // Tags the feedback status of the workspace as done using the given context
-func (c *Client) UpdateWorkspaceFeedbackStateWithContext(ctx context.Context, id uuid.UUID) error {
+func (c *Client) UpdateWorkspaceFeedbackStateWithContext(ctx context.Context, id *uuid.UUID) error {
 	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/tag_feedback_status_as_done", c.endpoint.Path))
 	if err != nil {
 		return err
@@ -307,6 +320,6 @@ func (c *Client) UpdateWorkspaceFeedbackStateWithContext(ctx context.Context, id
 
 // Tags the feedback status of the workspace as done.
 // Equivalent with calling UpdateWorkspaceFeedbackStateWithContext with background as context
-func (c *Client) UpdateWorkspaceFeedbackState(id uuid.UUID) error {
+func (c *Client) UpdateWorkspaceFeedbackState(id *uuid.UUID) error {
 	return c.UpdateWorkspaceFeedbackStateWithContext(context.Background(), id)
 }
