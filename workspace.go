@@ -78,7 +78,7 @@ type Workspace struct {
 
 // Creates and returns a new workspace using the given context
 func (c *Client) CreateWorkspaceWithContext(ctx context.Context, workspace *Workspace) (*Workspace, error) {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/create", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/create")
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (c *Client) CreateWorkspace(workspace *Workspace) (*Workspace, error) {
 
 // Deletes the workspace with the given UUID using the given context
 func (c *Client) DeleteWorkspaceWithContext(ctx context.Context, id *uuid.UUID) error {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/delete", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/delete")
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (c *Client) DeleteWorkspace(id *uuid.UUID) error {
 
 // Returns all the workspaces using the given context
 func (c *Client) ListWorkspacesWithContext(ctx context.Context) ([]Workspace, error) {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/list", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/list")
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (c *Client) ListWorkspaces() ([]Workspace, error) {
 
 // Returns the workspace with the given ID using the given context
 func (c *Client) FindWorkspaceByIDWithContext(ctx context.Context, id *uuid.UUID) (*Workspace, error) {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/get", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/get")
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +196,7 @@ func (c *Client) FindWorkspaceByID(id *uuid.UUID) (*Workspace, error) {
 
 // Returns the workspace with the given slug using the given context
 func (c *Client) FindWorkspaceBySlugWithContext(ctx context.Context, slug string) (*Workspace, error) {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/get_by_slug", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/get_by_slug")
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +238,7 @@ func (c *Client) UpdateWorkspaceStateWithContext(ctx context.Context, workspace 
 	workspace.Slug = ""
 	workspace.CustomerId = nil
 
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/update", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/update")
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +268,7 @@ func (c *Client) UpdateWorkspaceState(workspace Workspace) (*Workspace, error) {
 
 // Updates the name of workspace with the given id using the given context
 func (c *Client) UpdateWorkspaceNameWithContext(ctx context.Context, id *uuid.UUID, name string) (*Workspace, error) {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/update_name", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/update_name")
 	if err != nil {
 		return nil, err
 	}
@@ -301,7 +301,7 @@ func (c *Client) UpdateWorkspaceName(id *uuid.UUID, name string) (*Workspace, er
 
 // Tags the feedback status of the workspace as done using the given context
 func (c *Client) UpdateWorkspaceFeedbackStateWithContext(ctx context.Context, id *uuid.UUID) error {
-	u, err := c.endpoint.Parse(fmt.Sprintf("%s/v1/workspaces/tag_feedback_status_as_done", c.endpoint.Path))
+	u, err := appendToURL(c.endpoint, "/v1/workspaces/tag_feedback_status_as_done")
 	if err != nil {
 		return err
 	}

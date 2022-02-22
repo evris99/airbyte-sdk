@@ -116,3 +116,7 @@ func getErrorResponse(res *http.Response) error {
 
 	return ErrInvalidStatus
 }
+
+func appendToURL(u *url.URL, path string) (*url.URL, error) {
+	return u.Parse(fmt.Sprintf("%s%s", u.Path, path))
+}
