@@ -9,10 +9,12 @@ func TestListSourceDefinitions(t *testing.T) {
 	}
 
 	sourceDefinition := &SourceDefinition{
-		Name:             "test",
-		DockerRepository: "test",
-		DockerImageTag:   "test",
-		DocumentationURL: "https://test.com",
+		Definition: Definition{
+			Name:             "test",
+			DockerRepository: "test",
+			DockerImageTag:   "test",
+			DocumentationURL: "https://test.com",
+		},
 	}
 
 	new, err := airbyte.CreateSourceDefinition(sourceDefinition)

@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 type ConfigTypeEnum int
@@ -71,6 +73,20 @@ func (a ConfigTypeEnum) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(s)
+}
+
+type LogsType struct {
+	LogLines []string `json:"logLines"`
+}
+
+type JobInfoType struct {
+	ID         *uuid.UUID     `json:"id"`
+	ConfigType ConfigTypeEnum `json:"configType"`
+	ConfigId   string         `json:"configId"`
+	CreatedAt  int            `json:"createdAt"`
+	EndedAt    int            `json:"endedAt"`
+	Succeeded  bool           `json:"succeeded"`
+	Logs       *LogsType      `json:"logLines"`
 }
 
 var (
