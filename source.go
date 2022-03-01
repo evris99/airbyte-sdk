@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/google/uuid"
 )
@@ -16,53 +15,6 @@ type Source struct {
 	ConnectionConfiguration interface{} `json:"connectionConfiguration"`
 	Name                    string      `json:"name"`
 	SourceName              string      `json:"sourceName"`
-}
-
-type StatusType int
-
-const (
-	Succeeded StatusType = iota
-	Failed
-)
-
-// Unmarshaler for json
-func (st *StatusType) UnmarshalJSON(b []byte) error {
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-
-	switch strings.ToLower(s) {
-	case "succeeded":
-		*st = Succeeded
-	case "failed":
-		*st = Failed
-	default:
-		return fmt.Errorf("unknown status")
-	}
-
-	return nil
-}
-
-// Marshaler for json
-func (st StatusType) MarshalJSON() ([]byte, error) {
-	var s string
-	switch st {
-	case Succeeded:
-		s = "succeeded"
-	case Failed:
-		s = "failed"
-	default:
-		return nil, fmt.Errorf("unknown status")
-	}
-
-	return json.Marshal(s)
-}
-
-type Connection struct {
-	Status  StatusType   `json:"status"`
-	Message string       `json:"message"`
-	JobInfo *JobInfoType `json:"jobInfo"`
 }
 
 // Create a new source using the given context
@@ -81,7 +33,7 @@ func (c *Client) CreateSourceWithContext(ctx context.Context, source *Source) (*
 	// Decode JSON
 	newSource := new(Source)
 	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&newSource); err != nil {
+	if err := decoder.Decode(newSource); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
@@ -110,7 +62,7 @@ func (c *Client) UpdateSourceWithContext(ctx context.Context, source *Source) (*
 	// Decode JSON
 	updatedSource := new(Source)
 	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&updatedSource); err != nil {
+	if err := decoder.Decode(updatedSource); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
@@ -118,12 +70,12 @@ func (c *Client) UpdateSourceWithContext(ctx context.Context, source *Source) (*
 }
 
 // Update a source.
-// Equivalent with calling CreateSourceWithContext with background as context
+// Equivalent with calling UpdateSourceWithContext with background as context
 func (c *Client) UpdateSource(source *Source) (*Source, error) {
 	return c.UpdateSourceWithContext(context.Background(), source)
 }
 
-// Create a new source using the given context
+// Returns all the source in the workspace with the give ID using the given context
 func (c *Client) ListWorkspaceSourcesWithContext(ctx context.Context, workspaceID *uuid.UUID) ([]Source, error) {
 	u, err := appendToURL(c.endpoint, "/v1/sources/list")
 	if err != nil {
@@ -152,7 +104,7 @@ func (c *Client) ListWorkspaceSourcesWithContext(ctx context.Context, workspaceI
 	return sources.Sources, nil
 }
 
-// Create a new source.
+// Returns all the source in the workspace with the give ID.
 // Equivalent with calling CreateSourceWithContext with background as context
 func (c *Client) ListWorkspaceSources(workspaceID *uuid.UUID) ([]Source, error) {
 	return c.ListWorkspaceSourcesWithContext(context.Background(), workspaceID)
@@ -177,7 +129,7 @@ func (c *Client) GetSourceWithContext(ctx context.Context, id *uuid.UUID) (*Sour
 	// Decode JSON
 	source := new(Source)
 	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&source); err != nil {
+	if err := decoder.Decode(source); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
@@ -188,6 +140,35 @@ func (c *Client) GetSourceWithContext(ctx context.Context, id *uuid.UUID) (*Sour
 // Equivalent with calling GetSourceWithContext with background as context
 func (c *Client) GetSource(id *uuid.UUID) (*Source, error) {
 	return c.GetSourceWithContext(context.Background(), id)
+}
+
+// Searches for the given source using the given context
+func (c *Client) SearchSourceWithContext(ctx context.Context, source *Source) (*Source, error) {
+	u, err := appendToURL(c.endpoint, "/v1/sources/search")
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.makeRequest(ctx, u, source)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	//Decode JSON
+	foundSource := new(Source)
+	decoder := json.NewDecoder(res.Body)
+	if err := decoder.Decode(foundSource); err != nil {
+		return nil, fmt.Errorf("could not decode response: %w", err)
+	}
+
+	return foundSource, nil
+}
+
+// Searches for the given source.
+// Equivalent with calling SearchSourceWithContext with background as context
+func (c *Client) SearchSource(source *Source) (*Source, error) {
+	return c.SearchSourceWithContext(context.Background(), source)
 }
 
 // Makes a copy of the source with the given ID using the given context
@@ -209,7 +190,7 @@ func (c *Client) CloneSourceWithContext(ctx context.Context, id *uuid.UUID) (*So
 	// Decode JSON
 	source := new(Source)
 	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&source); err != nil {
+	if err := decoder.Decode(source); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
@@ -266,7 +247,7 @@ func (c *Client) CheckSourceConnectionWithContext(ctx context.Context, id *uuid.
 	// Decode JSON
 	connection := new(Connection)
 	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&connection); err != nil {
+	if err := decoder.Decode(connection); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
@@ -295,7 +276,7 @@ func (c *Client) CheckSourceConnectionUpdateWithContext(ctx context.Context, sou
 	// Decode JSON
 	connection := new(Connection)
 	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&connection); err != nil {
+	if err := decoder.Decode(connection); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
 	}
 
