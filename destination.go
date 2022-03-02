@@ -9,12 +9,12 @@ import (
 )
 
 type Destination struct {
-	DestinationId           *uuid.UUID  `json:"destinationId"`
-	DestinationDefinitionId *uuid.UUID  `json:"destinationDefinitionId"`
-	WorkspaceId             *uuid.UUID  `json:"workspaceId"`
-	ConnectionConfiguration interface{} `json:"connectionConfiguration"`
-	Name                    string      `json:"name"`
-	DestinationName         string      `json:"destinationName"`
+	DestinationId           *uuid.UUID  `json:"destinationId,omitempty"`
+	DestinationDefinitionId *uuid.UUID  `json:"destinationDefinitionId,omitempty"`
+	WorkspaceId             *uuid.UUID  `json:"workspaceId,omitempty"`
+	ConnectionConfiguration interface{} `json:"connectionConfiguration,omitempty"`
+	Name                    string      `json:"name,omitempty"`
+	DestinationName         string      `json:"destinationName,omitempty"`
 }
 
 // Create a new destination using the given context

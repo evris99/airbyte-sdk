@@ -48,7 +48,7 @@ func (st StatusType) MarshalJSON() ([]byte, error) {
 }
 
 type Connection struct {
-	Status  StatusType   `json:"status"`
-	Message string       `json:"message"`
-	JobInfo *JobInfoType `json:"jobInfo"`
+	Status  StatusType   `json:"status,omitempty"`
+	Message string       `json:"message,omitempty"`
+	JobInfo *JobInfoType `json:"jobInfo,omitempty"`
 }

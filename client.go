@@ -80,13 +80,13 @@ type LogsType struct {
 }
 
 type JobInfoType struct {
-	ID         *uuid.UUID     `json:"id"`
-	ConfigType ConfigTypeEnum `json:"configType"`
-	ConfigId   string         `json:"configId"`
-	CreatedAt  int            `json:"createdAt"`
-	EndedAt    int            `json:"endedAt"`
-	Succeeded  bool           `json:"succeeded"`
-	Logs       *LogsType      `json:"logLines"`
+	ID         *uuid.UUID     `json:"id,omitempty"`
+	ConfigType ConfigTypeEnum `json:"configType,omitempty"`
+	ConfigId   string         `json:"configId,omitempty"`
+	CreatedAt  int            `json:"createdAt,omitempty"`
+	EndedAt    int            `json:"endedAt,omitempty"`
+	Succeeded  bool           `json:"succeeded,omitempty"`
+	Logs       *LogsType      `json:"logLines,omitempty"`
 }
 
 var (
@@ -103,21 +103,21 @@ type Client struct {
 }
 
 type ValidationError struct {
-	PropertyPath string `json:"propertyPath"`
-	InvalidValue string `json:"invalidValue"`
-	Message      string `json:"message"`
+	PropertyPath string `json:"propertyPath,omitempty"`
+	InvalidValue string `json:"invalidValue,omitempty"`
+	Message      string `json:"message,omitempty"`
 }
 
 // The server's response in case of an error
 // It implements the error interface
 type ResponseError struct {
-	ID                          string            `json:"id"`
-	Message                     string            `json:"message"`
-	ExceptionClassName          string            `json:"exceptionClassName"`
-	ExceptionStack              []string          `json:"exceptionStack"`
-	ValidationErrors            []ValidationError `json:"validationErrors"`
-	RootCauseExceptionClassName string            `json:"rootCauseExceptionClassName"`
-	RootCauseExceptionStack     []string          `json:"rootCauseExceptionStack"`
+	ID                          string            `json:"id,omitempty"`
+	Message                     string            `json:"message,omitempty"`
+	ExceptionClassName          string            `json:"exceptionClassName,omitempty"`
+	ExceptionStack              []string          `json:"exceptionStack,omitempty"`
+	ValidationErrors            []ValidationError `json:"validationErrors,omitempty"`
+	RootCauseExceptionClassName string            `json:"rootCauseExceptionClassName,omitempty"`
+	RootCauseExceptionStack     []string          `json:"rootCauseExceptionStack,omitempty"`
 }
 
 // The implementation of the error interface for ResponseError

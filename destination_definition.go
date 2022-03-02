@@ -62,10 +62,10 @@ func (sup SupportedDestinationSyncModesType) MarshalJSON() ([]byte, error) {
 
 type DestinationDefinitionSpecification struct {
 	DefinitionSpecification
-	DestinationDefinitionId       *uuid.UUID                        `json:"destinationDefinitionId"`
-	SupportedDestinationSyncModes SupportedDestinationSyncModesType `json:"supportedDestinationSyncModes"`
-	SupportsDbt                   bool                              `json:"supportsDbt"`
-	SupportsNormalization         bool                              `json:"supportsNormalization"`
+	DestinationDefinitionId       *uuid.UUID                        `json:"destinationDefinitionId,omitempty"`
+	SupportedDestinationSyncModes SupportedDestinationSyncModesType `json:"supportedDestinationSyncModes,omitempty"`
+	SupportsDbt                   bool                              `json:"supportsDbt,omitempty"`
+	SupportsNormalization         bool                              `json:"supportsNormalization,omitempty"`
 }
 
 // Creates and returns a new destination definition using the given context

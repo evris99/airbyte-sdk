@@ -102,14 +102,14 @@ func (a AuthenticationTypeEnum) MarshalJSON() ([]byte, error) {
 }
 
 type Oauth2SpecificationType struct {
-	RootObject                interface{} `json:"rootObject"`
-	OauthFlowInitParameters   [][]string  `json:"oauthFlowInitParameters"`
-	OauthFlowOutputParameters [][]string  `json:"oauthFlowOutputParameters"`
+	RootObject                interface{} `json:"rootObject,omitempty"`
+	OauthFlowInitParameters   [][]string  `json:"oauthFlowInitParameters,omitempty"`
+	OauthFlowOutputParameters [][]string  `json:"oauthFlowOutputParameters,omitempty"`
 }
 
 type AuthSpecificationType struct {
-	AuthType            *AuthenticationTypeEnum  `json:"auth_type"`
-	Oauth2Specification *Oauth2SpecificationType `json:"oauth2Specification"`
+	AuthType            *AuthenticationTypeEnum  `json:"auth_type,omitempty"`
+	Oauth2Specification *Oauth2SpecificationType `json:"oauth2Specification,omitempty"`
 }
 
 type AuthFlowTypeEnum int
@@ -154,23 +154,23 @@ func (a AuthFlowTypeEnum) MarshalJSON() ([]byte, error) {
 }
 
 type OauthConfigSpecificationType struct {
-	OauthUserInputFromConnectorConfigSpecification []byte `json:"oauthUserInputFromConnectorConfigSpecification"`
-	CompleteOAuthOutputSpecification               []byte `json:"completeOAuthOutputSpecification"`
-	CompleteOAuthServerInputSpecification          []byte `json:"completeOAuthServerInputSpecification"`
-	CompleteOAuthServerOutputSpecification         []byte `json:"completeOAuthServerOutputSpecification"`
+	OauthUserInputFromConnectorConfigSpecification []byte `json:"oauthUserInputFromConnectorConfigSpecification,omitempty"`
+	CompleteOAuthOutputSpecification               []byte `json:"completeOAuthOutputSpecification,omitempty"`
+	CompleteOAuthServerInputSpecification          []byte `json:"completeOAuthServerInputSpecification,omitempty"`
+	CompleteOAuthServerOutputSpecification         []byte `json:"completeOAuthServerOutputSpecification,omitempty"`
 }
 
 type AdvancedAuthType struct {
-	AuthFlowType             AuthFlowTypeEnum              `json:"authFlowType"`
-	PredicateKey             []string                      `json:"predicateKey"`
-	PredicateValue           string                        `json:"predicateValue"`
-	OauthConfigSpecification *OauthConfigSpecificationType `json:"oauthConfigSpecification"`
+	AuthFlowType             AuthFlowTypeEnum              `json:"authFlowType,omitempty"`
+	PredicateKey             []string                      `json:"predicateKey,omitempty"`
+	PredicateValue           string                        `json:"predicateValue,omitempty"`
+	OauthConfigSpecification *OauthConfigSpecificationType `json:"oauthConfigSpecification,omitempty"`
 }
 
 type DefinitionSpecification struct {
-	DocumentationUrl        string                 `json:"documentationUrl"`
-	ConnectionSpecification map[string]interface{} `json:"connectionSpecification"`
-	AuthSpecification       AuthSpecificationType  `json:"authSpecification"`
-	AdvancedAuth            AdvancedAuthType       `json:"advancedAuth"`
-	JobInfo                 *JobInfoType           `json:"jobInfo"`
+	DocumentationUrl        string                 `json:"documentationUrl,omitempty"`
+	ConnectionSpecification map[string]interface{} `json:"connectionSpecification,omitempty"`
+	AuthSpecification       AuthSpecificationType  `json:"authSpecification,omitempty"`
+	AdvancedAuth            AdvancedAuthType       `json:"advancedAuth,omitempty"`
+	JobInfo                 *JobInfoType           `json:"jobInfo,omitempty"`
 }

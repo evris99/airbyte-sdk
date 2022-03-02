@@ -53,9 +53,9 @@ type SlackConfiguration struct {
 
 // Options for notification
 type Notification struct {
-	NotificationType   NotificationTypeEnum `json:"notificationType"`
-	SendOnSuccess      bool                 `json:"sendOnSuccess"`
-	SendOnFailure      bool                 `json:"sendOnFailure"`
+	NotificationType   NotificationTypeEnum `json:"notificationType,omitempty"`
+	SendOnSuccess      bool                 `json:"sendOnSuccess,omitempty"`
+	SendOnFailure      bool                 `json:"sendOnFailure,omitempty"`
 	SlackConfiguration SlackConfiguration   `json:"slackConfiguration,omitempty"`
 }
 

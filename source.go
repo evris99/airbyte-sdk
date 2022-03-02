@@ -9,12 +9,12 @@ import (
 )
 
 type Source struct {
-	SourceId                *uuid.UUID  `json:"sourceId"`
-	SourceDefinitionId      *uuid.UUID  `json:"sourceDefinitionId"`
-	WorkspaceId             *uuid.UUID  `json:"workspaceId"`
-	ConnectionConfiguration interface{} `json:"connectionConfiguration"`
-	Name                    string      `json:"name"`
-	SourceName              string      `json:"sourceName"`
+	SourceId                *uuid.UUID  `json:"sourceId,omitempty"`
+	SourceDefinitionId      *uuid.UUID  `json:"sourceDefinitionId,omitempty"`
+	WorkspaceId             *uuid.UUID  `json:"workspaceId,omitempty"`
+	ConnectionConfiguration interface{} `json:"connectionConfiguration,omitempty"`
+	Name                    string      `json:"name,omitempty"`
+	SourceName              string      `json:"sourceName,omitempty"`
 }
 
 // Create a new source using the given context

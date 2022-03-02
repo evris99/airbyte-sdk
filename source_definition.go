@@ -17,7 +17,7 @@ type SourceDefinition struct {
 
 type SourceDefinitionSpecification struct {
 	DefinitionSpecification
-	SourceDefinitionId *uuid.UUID `json:"sourceDefinitionId"`
+	SourceDefinitionId *uuid.UUID `json:"sourceDefinitionId,omitempty"`
 }
 
 // Creates new source definition using the given context
