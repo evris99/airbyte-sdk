@@ -229,7 +229,7 @@ func (c *Client) DeleteDestination(id *uuid.UUID) error {
 }
 
 // Checks the connection to the destination with the given ID using the given context
-func (c *Client) CheckDestinationConnectionWithContext(ctx context.Context, id *uuid.UUID) (*Connection, error) {
+func (c *Client) CheckDestinationConnectionWithContext(ctx context.Context, id *uuid.UUID) (*ConnectionCheck, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/check_connection")
 	if err != nil {
 		return nil, err
@@ -245,7 +245,7 @@ func (c *Client) CheckDestinationConnectionWithContext(ctx context.Context, id *
 	defer res.Body.Close()
 
 	// Decode JSON
-	connection := new(Connection)
+	connection := new(ConnectionCheck)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(connection); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
@@ -256,12 +256,12 @@ func (c *Client) CheckDestinationConnectionWithContext(ctx context.Context, id *
 
 // Checks the connection to the destination with the given ID.
 // Equivalent with calling CheckDestinationConnectionWithContext with background as context
-func (c *Client) CheckDestinationConnection(id *uuid.UUID) (*Connection, error) {
+func (c *Client) CheckDestinationConnection(id *uuid.UUID) (*ConnectionCheck, error) {
 	return c.CheckDestinationConnectionWithContext(context.Background(), id)
 }
 
 // Checks the connection to the destination with the given ID for updates using the given context
-func (c *Client) CheckDestinationConnectionUpdateWithContext(ctx context.Context, dest *Destination) (*Connection, error) {
+func (c *Client) CheckDestinationConnectionUpdateWithContext(ctx context.Context, dest *Destination) (*ConnectionCheck, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/check_connection_for_update")
 	if err != nil {
 		return nil, err
@@ -274,7 +274,7 @@ func (c *Client) CheckDestinationConnectionUpdateWithContext(ctx context.Context
 	defer res.Body.Close()
 
 	// Decode JSON
-	connection := new(Connection)
+	connection := new(ConnectionCheck)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(connection); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
@@ -285,6 +285,6 @@ func (c *Client) CheckDestinationConnectionUpdateWithContext(ctx context.Context
 
 // Checks the connection to the destination with the given ID for updates.
 // Equivalent with calling CheckDestinationConnectionUpdateWithContext with background as context
-func (c *Client) CheckDestinationConnectionUpdate(dest *Destination) (*Connection, error) {
+func (c *Client) CheckDestinationConnectionUpdate(dest *Destination) (*ConnectionCheck, error) {
 	return c.CheckDestinationConnectionUpdateWithContext(context.Background(), dest)
 }

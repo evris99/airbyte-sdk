@@ -229,7 +229,7 @@ func (c *Client) DeleteSource(id *uuid.UUID) error {
 }
 
 // Checks the connection to the source with the given ID using the given context
-func (c *Client) CheckSourceConnectionWithContext(ctx context.Context, id *uuid.UUID) (*Connection, error) {
+func (c *Client) CheckSourceConnectionWithContext(ctx context.Context, id *uuid.UUID) (*ConnectionCheck, error) {
 	u, err := appendToURL(c.endpoint, "/v1/sources/check_connection")
 	if err != nil {
 		return nil, err
@@ -245,7 +245,7 @@ func (c *Client) CheckSourceConnectionWithContext(ctx context.Context, id *uuid.
 	defer res.Body.Close()
 
 	// Decode JSON
-	connection := new(Connection)
+	connection := new(ConnectionCheck)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(connection); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
@@ -256,12 +256,12 @@ func (c *Client) CheckSourceConnectionWithContext(ctx context.Context, id *uuid.
 
 // Checks the connection to the source with the given ID.
 // Equivalent with calling CheckSourceConnectionWithContext with background as context
-func (c *Client) CheckSourceConnection(id *uuid.UUID) (*Connection, error) {
+func (c *Client) CheckSourceConnection(id *uuid.UUID) (*ConnectionCheck, error) {
 	return c.CheckSourceConnectionWithContext(context.Background(), id)
 }
 
 // Checks the connection to the source with the given ID for updates using the given context
-func (c *Client) CheckSourceConnectionUpdateWithContext(ctx context.Context, source *Source) (*Connection, error) {
+func (c *Client) CheckSourceConnectionUpdateWithContext(ctx context.Context, source *Source) (*ConnectionCheck, error) {
 	u, err := appendToURL(c.endpoint, "/v1/sources/check_connection_for_update")
 	if err != nil {
 		return nil, err
@@ -274,7 +274,7 @@ func (c *Client) CheckSourceConnectionUpdateWithContext(ctx context.Context, sou
 	defer res.Body.Close()
 
 	// Decode JSON
-	connection := new(Connection)
+	connection := new(ConnectionCheck)
 	decoder := json.NewDecoder(res.Body)
 	if err := decoder.Decode(connection); err != nil {
 		return nil, fmt.Errorf("could not decode response: %w", err)
@@ -285,6 +285,6 @@ func (c *Client) CheckSourceConnectionUpdateWithContext(ctx context.Context, sou
 
 // Checks the connection to the source with the given ID for updates.
 // Equivalent with calling CheckSourceConnectionUpdateWithContext with background as context
-func (c *Client) CheckSourceConnectionUpdate(source *Source) (*Connection, error) {
+func (c *Client) CheckSourceConnectionUpdate(source *Source) (*ConnectionCheck, error) {
 	return c.CheckSourceConnectionUpdateWithContext(context.Background(), source)
 }
