@@ -9,6 +9,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/evris99/airbyte-sdk/types"
 )
 
 var (
@@ -22,29 +24,6 @@ type Client struct {
 	// The underlying HTTP Client
 	HttpClient *http.Client
 	endpoint   *url.URL
-}
-
-type ValidationError struct {
-	PropertyPath string `json:"propertyPath,omitempty"`
-	InvalidValue string `json:"invalidValue,omitempty"`
-	Message      string `json:"message,omitempty"`
-}
-
-// The server's response in case of an error
-// It implements the error interface
-type ResponseError struct {
-	ID                          string            `json:"id,omitempty"`
-	Message                     string            `json:"message,omitempty"`
-	ExceptionClassName          string            `json:"exceptionClassName,omitempty"`
-	ExceptionStack              []string          `json:"exceptionStack,omitempty"`
-	ValidationErrors            []ValidationError `json:"validationErrors,omitempty"`
-	RootCauseExceptionClassName string            `json:"rootCauseExceptionClassName,omitempty"`
-	RootCauseExceptionStack     []string          `json:"rootCauseExceptionStack,omitempty"`
-}
-
-// The implementation of the error interface for ResponseError
-func (e *ResponseError) Error() string {
-	return e.Message
 }
 
 // Creates and returns a new airbyte API client
@@ -101,10 +80,9 @@ func (c *Client) makeRequest(ctx context.Context, u *url.URL, data interface{}) 
 // And returns the according error
 func getErrorResponse(res *http.Response) error {
 	if res.StatusCode >= 400 && res.StatusCode < 600 {
-		decoder := json.NewDecoder(res.Body)
-		responseError := new(ResponseError)
-		if err := decoder.Decode(responseError); err != nil {
-			return fmt.Errorf("could not decode error json: %w", err)
+		responseError, err := types.ResponseErrorFromJSON(res.Body)
+		if err != nil {
+			return fmt.Errorf("could not decode error response: %v", err)
 		}
 
 		return responseError
