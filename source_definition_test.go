@@ -1,15 +1,18 @@
 package airbytesdk
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/evris99/airbyte-sdk/types"
+)
 
 func TestListSourceDefinitions(t *testing.T) {
 	airbyte, err := New("http://localhost:8000/api")
 	if err != nil {
 		t.Fatalf("could not create instance: %v", err)
 	}
-
-	sourceDefinition := &SourceDefinition{
-		Definition: Definition{
+	sourceDefinition := &types.SourceDefinition{
+		Definition: types.Definition{
 			Name:             "test",
 			DockerRepository: "test",
 			DockerImageTag:   "test",

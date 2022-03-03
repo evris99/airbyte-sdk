@@ -1,4 +1,4 @@
-package airbytesdk
+package types
 
 import (
 	"encoding/json"
@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-type ReleaseStageEnum int
+type ReleaseStage int
 
 const (
-	Alpha ReleaseStageEnum = iota
+	Alpha ReleaseStage = iota
 	Beta
 	GenerallyAvailable
 	Custom
 )
 
 // Unmarshaler for json
-func (r *ReleaseStageEnum) UnmarshalJSON(b []byte) error {
+func (r *ReleaseStage) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
@@ -39,7 +39,7 @@ func (r *ReleaseStageEnum) UnmarshalJSON(b []byte) error {
 }
 
 // Marshaler for json
-func (r ReleaseStageEnum) MarshalJSON() ([]byte, error) {
+func (r ReleaseStage) MarshalJSON() ([]byte, error) {
 	var s string
 	switch r {
 	case Alpha:
@@ -58,21 +58,23 @@ func (r ReleaseStageEnum) MarshalJSON() ([]byte, error) {
 }
 
 type Definition struct {
-	Name             string           `json:"name,omitempty"`
-	DockerRepository string           `json:"dockerRepository,omitempty"`
-	DockerImageTag   string           `json:"dockerImageTag,omitempty"`
-	DocumentationURL string           `json:"documentationUrl,omitempty"`
-	Icon             string           `json:"icon,omitempty"`
-	ReleaseStage     ReleaseStageEnum `json:"releaseStage,omitempty"`
-	ReleaseDate      string           `json:"releaseDate,omitempty"`
+	Name             string       `json:"name,omitempty"`
+	DockerRepository string       `json:"dockerRepository,omitempty"`
+	DockerImageTag   string       `json:"dockerImageTag,omitempty"`
+	DocumentationURL string       `json:"documentationUrl,omitempty"`
+	Icon             string       `json:"icon,omitempty"`
+	ReleaseStage     ReleaseStage `json:"releaseStage,omitempty"`
+	ReleaseDate      string       `json:"releaseDate,omitempty"`
 }
 
+type AuthenticationType int
+
 const (
-	OAuth AuthenticationTypeEnum = iota
+	OAuth AuthenticationType = iota
 )
 
 // Unmarshaler for json
-func (a *AuthenticationTypeEnum) UnmarshalJSON(b []byte) error {
+func (a *AuthenticationType) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
@@ -89,7 +91,7 @@ func (a *AuthenticationTypeEnum) UnmarshalJSON(b []byte) error {
 }
 
 // Marshaler for json
-func (a AuthenticationTypeEnum) MarshalJSON() ([]byte, error) {
+func (a AuthenticationType) MarshalJSON() ([]byte, error) {
 	var s string
 	switch a {
 	case OAuth:
@@ -101,26 +103,26 @@ func (a AuthenticationTypeEnum) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s)
 }
 
-type Oauth2SpecificationType struct {
+type Oauth2Specification struct {
 	RootObject                interface{} `json:"rootObject,omitempty"`
 	OauthFlowInitParameters   [][]string  `json:"oauthFlowInitParameters,omitempty"`
 	OauthFlowOutputParameters [][]string  `json:"oauthFlowOutputParameters,omitempty"`
 }
 
-type AuthSpecificationType struct {
-	AuthType            *AuthenticationTypeEnum  `json:"auth_type,omitempty"`
-	Oauth2Specification *Oauth2SpecificationType `json:"oauth2Specification,omitempty"`
+type AuthSpecification struct {
+	AuthType            *AuthenticationType  `json:"auth_type,omitempty"`
+	Oauth2Specification *Oauth2Specification `json:"oauth2Specification,omitempty"`
 }
 
-type AuthFlowTypeEnum int
+type AuthFlowType int
 
 const (
-	OAuth2 AuthFlowTypeEnum = iota
+	OAuth2 AuthFlowType = iota
 	OAuth1
 )
 
 // Unmarshaler for json
-func (a *AuthFlowTypeEnum) UnmarshalJSON(b []byte) error {
+func (a *AuthFlowType) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
@@ -139,7 +141,7 @@ func (a *AuthFlowTypeEnum) UnmarshalJSON(b []byte) error {
 }
 
 // Marshaler for json
-func (a AuthFlowTypeEnum) MarshalJSON() ([]byte, error) {
+func (a AuthFlowType) MarshalJSON() ([]byte, error) {
 	var s string
 	switch a {
 	case OAuth2:
@@ -153,24 +155,24 @@ func (a AuthFlowTypeEnum) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s)
 }
 
-type OauthConfigSpecificationType struct {
+type OauthConfigSpecification struct {
 	OauthUserInputFromConnectorConfigSpecification []byte `json:"oauthUserInputFromConnectorConfigSpecification,omitempty"`
 	CompleteOAuthOutputSpecification               []byte `json:"completeOAuthOutputSpecification,omitempty"`
 	CompleteOAuthServerInputSpecification          []byte `json:"completeOAuthServerInputSpecification,omitempty"`
 	CompleteOAuthServerOutputSpecification         []byte `json:"completeOAuthServerOutputSpecification,omitempty"`
 }
 
-type AdvancedAuthType struct {
-	AuthFlowType             AuthFlowTypeEnum              `json:"authFlowType,omitempty"`
-	PredicateKey             []string                      `json:"predicateKey,omitempty"`
-	PredicateValue           string                        `json:"predicateValue,omitempty"`
-	OauthConfigSpecification *OauthConfigSpecificationType `json:"oauthConfigSpecification,omitempty"`
+type AdvancedAuth struct {
+	AuthFlowType             AuthFlowType              `json:"authFlowType,omitempty"`
+	PredicateKey             []string                  `json:"predicateKey,omitempty"`
+	PredicateValue           string                    `json:"predicateValue,omitempty"`
+	OauthConfigSpecification *OauthConfigSpecification `json:"oauthConfigSpecification,omitempty"`
 }
 
 type DefinitionSpecification struct {
 	DocumentationUrl        string                 `json:"documentationUrl,omitempty"`
 	ConnectionSpecification map[string]interface{} `json:"connectionSpecification,omitempty"`
-	AuthSpecification       AuthSpecificationType  `json:"authSpecification,omitempty"`
-	AdvancedAuth            AdvancedAuthType       `json:"advancedAuth,omitempty"`
-	JobInfo                 *JobInfoType           `json:"jobInfo,omitempty"`
+	AuthSpecification       AuthSpecification      `json:"authSpecification,omitempty"`
+	AdvancedAuth            *AdvancedAuth          `json:"advancedAuth,omitempty"`
+	JobInfo                 *JobInfo               `json:"jobInfo,omitempty"`
 }

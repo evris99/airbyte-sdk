@@ -178,7 +178,7 @@ func (c *Client) makeRequest(ctx context.Context, u *url.URL, data interface{}) 
 // Receives an HTTP response with a non 2XX status code
 // And returns the according error
 func getErrorResponse(res *http.Response) error {
-	if res.StatusCode >= 400 || res.StatusCode < 500 {
+	if res.StatusCode >= 400 && res.StatusCode < 600 {
 		decoder := json.NewDecoder(res.Body)
 		responseError := new(ResponseError)
 		if err := decoder.Decode(responseError); err != nil {
@@ -186,10 +186,6 @@ func getErrorResponse(res *http.Response) error {
 		}
 
 		return responseError
-	}
-
-	if res.StatusCode >= 500 || res.StatusCode < 600 {
-		return ErrServer
 	}
 
 	return ErrInvalidStatus

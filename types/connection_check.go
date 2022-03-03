@@ -1,8 +1,9 @@
-package airbytesdk
+package types
 
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 )
 
@@ -48,7 +49,15 @@ func (st StatusType) MarshalJSON() ([]byte, error) {
 }
 
 type ConnectionCheck struct {
-	Status  StatusType   `json:"status,omitempty"`
-	Message string       `json:"message,omitempty"`
-	JobInfo *JobInfoType `json:"jobInfo,omitempty"`
+	Status  StatusType `json:"status,omitempty"`
+	Message string     `json:"message,omitempty"`
+	JobInfo *JobInfo   `json:"jobInfo,omitempty"`
+}
+
+// ConnectionCheckFromJSON reads json data from a Reader and returns a workspace
+func ConnectionCheckFromJSON(r io.Reader) (*ConnectionCheck, error) {
+	connCheck := new(ConnectionCheck)
+	err := json.NewDecoder(r).Decode(connCheck)
+
+	return connCheck, fmt.Errorf("could not decode JSON: %w", err)
 }

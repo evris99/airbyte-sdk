@@ -2,74 +2,13 @@ package airbytesdk
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"strings"
 
+	"github.com/evris99/airbyte-sdk/types"
 	"github.com/google/uuid"
 )
 
-type DestinationDefinition struct {
-	Definition
-	DestinationDefinitionId *uuid.UUID `json:"destinationDefinitionId,omitempty"`
-}
-
-type SupportedDestinationSyncModesType int
-
-const (
-	Append SupportedDestinationSyncModesType = iota
-	Overwrite
-	AppendDedup
-)
-
-// Unmarshaler for json
-func (sup *SupportedDestinationSyncModesType) UnmarshalJSON(b []byte) error {
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-
-	switch strings.ToLower(s) {
-	case "append":
-		*sup = Append
-	case "overwrite":
-		*sup = Overwrite
-	case "append_dedup":
-		*sup = AppendDedup
-	default:
-		return fmt.Errorf("unknown auth flow type")
-	}
-
-	return nil
-}
-
-// Marshaler for json
-func (sup SupportedDestinationSyncModesType) MarshalJSON() ([]byte, error) {
-	var s string
-	switch sup {
-	case Append:
-		s = "append"
-	case Overwrite:
-		s = "overwrite"
-	case AppendDedup:
-		s = "append_dedup"
-	default:
-		return nil, fmt.Errorf("unknown auth flow type")
-	}
-
-	return json.Marshal(s)
-}
-
-type DestinationDefinitionSpecification struct {
-	DefinitionSpecification
-	DestinationDefinitionId       *uuid.UUID                        `json:"destinationDefinitionId,omitempty"`
-	SupportedDestinationSyncModes SupportedDestinationSyncModesType `json:"supportedDestinationSyncModes,omitempty"`
-	SupportsDbt                   bool                              `json:"supportsDbt,omitempty"`
-	SupportsNormalization         bool                              `json:"supportsNormalization,omitempty"`
-}
-
 // Creates and returns a new destination definition using the given context
-func (c *Client) CreateDestinationDefinitionWithContext(ctx context.Context, definition *DestinationDefinition) (*DestinationDefinition, error) {
+func (c *Client) CreateDestinationDefinitionWithContext(ctx context.Context, definition *types.DestinationDefinition) (*types.DestinationDefinition, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destination_definitions/create")
 	if err != nil {
 		return nil, err
@@ -81,24 +20,17 @@ func (c *Client) CreateDestinationDefinitionWithContext(ctx context.Context, def
 	}
 	defer res.Body.Close()
 
-	// Decode JSON
-	newDefinition := new(DestinationDefinition)
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(newDefinition); err != nil {
-		return nil, fmt.Errorf("could not decode response: %w", err)
-	}
-
-	return newDefinition, nil
+	return types.DestinationDefinitionFromJSON(res.Body)
 }
 
 // Creates and returns a new destination definition.
 // Equivalent with calling CreateDestinationDefinitionWithContext with background as context
-func (c *Client) CreateDestinationDefinition(definition *DestinationDefinition) (*DestinationDefinition, error) {
+func (c *Client) CreateDestinationDefinition(definition *types.DestinationDefinition) (*types.DestinationDefinition, error) {
 	return c.CreateDestinationDefinitionWithContext(context.Background(), definition)
 }
 
 // Updates a destination definition. Currently, the only allowed attribute to update is the default docker image version.
-func (c *Client) UpdateDestinationDefinitionDockerImageWithContext(ctx context.Context, id *uuid.UUID, dockerImageTag string) (*DestinationDefinition, error) {
+func (c *Client) UpdateDestinationDefinitionDockerImageWithContext(ctx context.Context, id *uuid.UUID, dockerImageTag string) (*types.DestinationDefinition, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destination_definitions/update")
 	if err != nil {
 		return nil, err
@@ -114,24 +46,17 @@ func (c *Client) UpdateDestinationDefinitionDockerImageWithContext(ctx context.C
 	}
 	defer res.Body.Close()
 
-	// Decode JSON
-	updatedDefinition := new(DestinationDefinition)
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(updatedDefinition); err != nil {
-		return nil, fmt.Errorf("could not decode response: %w", err)
-	}
-
-	return updatedDefinition, nil
+	return types.DestinationDefinitionFromJSON(res.Body)
 }
 
 // Updates a destination definition. Currently, the only allowed attribute to update is the default docker image version.
 // Equivalent with calling UpdateDestinationDefinitionDockerImageWithContext with background as context
-func (c *Client) UpdateDestinationDefinitionDockerImage(id *uuid.UUID, dockerImageTag string) (*DestinationDefinition, error) {
+func (c *Client) UpdateDestinationDefinitionDockerImage(id *uuid.UUID, dockerImageTag string) (*types.DestinationDefinition, error) {
 	return c.UpdateDestinationDefinitionDockerImageWithContext(context.Background(), id, dockerImageTag)
 }
 
 // Returns all the destination definitions the current Airbyte deployment is configured to use using the given context
-func (c *Client) ListDestinationDefinitionsWithContext(ctx context.Context) ([]DestinationDefinition, error) {
+func (c *Client) ListDestinationDefinitionsWithContext(ctx context.Context) ([]types.DestinationDefinition, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destination_definitions/list")
 	if err != nil {
 		return nil, err
@@ -143,28 +68,17 @@ func (c *Client) ListDestinationDefinitionsWithContext(ctx context.Context) ([]D
 	}
 	defer res.Body.Close()
 
-	// This is needed because the response list is contained in a destinationDefinitions object
-	var destinationDefinitions struct {
-		DestinationDefinitions []DestinationDefinition `json:"destinationDefinitions"`
-	}
-
-	// Decode JSON
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&destinationDefinitions); err != nil {
-		return nil, fmt.Errorf("could not decode response: %w", err)
-	}
-
-	return destinationDefinitions.DestinationDefinitions, nil
+	return types.DestinationDefinitionsFromJSON(res.Body)
 }
 
 // Returns all the destination definitions the current Airbyte deployment is configured to use.
 // Equivalent with calling ListDestinationDefinitionsWithContext with background as context
-func (c *Client) ListDestinationDefinitions() ([]DestinationDefinition, error) {
+func (c *Client) ListDestinationDefinitions() ([]types.DestinationDefinition, error) {
 	return c.ListDestinationDefinitionsWithContext(context.Background())
 }
 
 // Returns the latest destination definitions the current Airbyte deployment is configured to use using the given context
-func (c *Client) ListLatestDestinationDefinitionsWithContext(ctx context.Context) ([]DestinationDefinition, error) {
+func (c *Client) ListLatestDestinationDefinitionsWithContext(ctx context.Context) ([]types.DestinationDefinition, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destination_definitions/list_latest")
 	if err != nil {
 		return nil, err
@@ -176,28 +90,17 @@ func (c *Client) ListLatestDestinationDefinitionsWithContext(ctx context.Context
 	}
 	defer res.Body.Close()
 
-	// This is needed because the response list is contained in a sourceDefinitions object
-	var destinationDefinitions struct {
-		DestinationDefinitions []DestinationDefinition `json:"destinationDefinitions"`
-	}
-
-	// Decode JSON
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(&destinationDefinitions); err != nil {
-		return nil, fmt.Errorf("could not decode response: %w", err)
-	}
-
-	return destinationDefinitions.DestinationDefinitions, nil
+	return types.DestinationDefinitionsFromJSON(res.Body)
 }
 
 // Returns the latest destination definitions the current Airbyte deployment is configured to use.
 // Equivalent with calling ListLatestDestinationDefinitionsWithContext with background as context
-func (c *Client) ListLatestDestinationDefinitions() ([]DestinationDefinition, error) {
+func (c *Client) ListLatestDestinationDefinitions() ([]types.DestinationDefinition, error) {
 	return c.ListLatestDestinationDefinitionsWithContext(context.Background())
 }
 
 // Returns the destination definition with the given ID using the given context
-func (c *Client) GetDestinationDefinitionWithContext(ctx context.Context, id *uuid.UUID) (*DestinationDefinition, error) {
+func (c *Client) GetDestinationDefinitionWithContext(ctx context.Context, id *uuid.UUID) (*types.DestinationDefinition, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destination_definitions/get")
 	if err != nil {
 		return nil, err
@@ -212,19 +115,12 @@ func (c *Client) GetDestinationDefinitionWithContext(ctx context.Context, id *uu
 	}
 	defer res.Body.Close()
 
-	// Decode JSON
-	definition := new(DestinationDefinition)
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(definition); err != nil {
-		return nil, fmt.Errorf("could not decode response: %w", err)
-	}
-
-	return definition, nil
+	return types.DestinationDefinitionFromJSON(res.Body)
 }
 
 // Returns the destination definition with the given ID.
 // Equivalent with calling GetDestinationDefinitionsWithContext with background as context
-func (c *Client) GetDestinationDefinition(id *uuid.UUID) (*DestinationDefinition, error) {
+func (c *Client) GetDestinationDefinition(id *uuid.UUID) (*types.DestinationDefinition, error) {
 	return c.GetDestinationDefinitionWithContext(context.Background(), id)
 }
 
@@ -254,7 +150,7 @@ func (c *Client) DeleteDestinationDefinition(id *uuid.UUID) error {
 }
 
 // Returns the source definition specification using the given context
-func (c *Client) GetDestinationDefinitionSpecificationWithContext(ctx context.Context, id *uuid.UUID) (*DestinationDefinitionSpecification, error) {
+func (c *Client) GetDestinationDefinitionSpecificationWithContext(ctx context.Context, id *uuid.UUID) (*types.DestinationDefinitionSpecification, error) {
 	u, err := appendToURL(c.endpoint, "/v1/source_definition_specifications/get")
 	if err != nil {
 		return nil, err
@@ -269,18 +165,11 @@ func (c *Client) GetDestinationDefinitionSpecificationWithContext(ctx context.Co
 	}
 	defer res.Body.Close()
 
-	// Decode JSON
-	definitionSpecification := new(DestinationDefinitionSpecification)
-	decoder := json.NewDecoder(res.Body)
-	if err := decoder.Decode(definitionSpecification); err != nil {
-		return nil, fmt.Errorf("could not decode response: %w", err)
-	}
-
-	return definitionSpecification, nil
+	return types.DestinationDefinitionSpecificationToJSON(res.Body)
 }
 
 // Returns the destination definition specification.
 // Equivalent with calling GetDestinationDefinitionSpecificationWithContext with background as context
-func (c *Client) GetDestinationDefinitionSpecification(id *uuid.UUID) (*DestinationDefinitionSpecification, error) {
+func (c *Client) GetDestinationDefinitionSpecification(id *uuid.UUID) (*types.DestinationDefinitionSpecification, error) {
 	return c.GetDestinationDefinitionSpecificationWithContext(context.Background(), id)
 }

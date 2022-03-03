@@ -2,6 +2,8 @@ package airbytesdk
 
 import (
 	"testing"
+
+	"github.com/evris99/airbyte-sdk/types"
 )
 
 func TestListWorkspace(t *testing.T) {
@@ -11,7 +13,7 @@ func TestListWorkspace(t *testing.T) {
 	}
 
 	// Create new workspace
-	workspace := &Workspace{
+	workspace := &types.Workspace{
 		Name:                    "test",
 		Email:                   "test@gmail.com",
 		AnonymousDataCollection: false,
@@ -53,7 +55,7 @@ func TestFindWorkspace(t *testing.T) {
 		t.Fatalf("could not create instance: %v", err)
 	}
 
-	workspace := &Workspace{
+	workspace := &types.Workspace{
 		Name:                    "test",
 		Email:                   "test@gmail.com",
 		AnonymousDataCollection: false,
@@ -98,7 +100,7 @@ func TestUpdateWorkspace(t *testing.T) {
 	}
 
 	// Create new workspace
-	workspace := &Workspace{
+	workspace := &types.Workspace{
 		Name:                    "test",
 		Email:                   "test@gmail.com",
 		AnonymousDataCollection: false,
@@ -110,7 +112,7 @@ func TestUpdateWorkspace(t *testing.T) {
 	}
 
 	// Update workspace email
-	update := Workspace{
+	update := types.Workspace{
 		WorkspaceId:             new.WorkspaceId,
 		InitialSetupComplete:    true,
 		AnonymousDataCollection: true,
