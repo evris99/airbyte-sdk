@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 
 	"github.com/google/uuid"
@@ -23,7 +22,7 @@ func SourceDefinitionFromJSON(r io.Reader) (*SourceDefinition, error) {
 	sourceDefinition := new(SourceDefinition)
 	err := json.NewDecoder(r).Decode(sourceDefinition)
 
-	return sourceDefinition, fmt.Errorf("could not decode JSON: %w", err)
+	return sourceDefinition, err
 }
 
 // SourcesFromJSON reads json data from a Reader and returns a slice of source definitions
@@ -34,7 +33,7 @@ func SourceDefinitionsFromJSON(r io.Reader) ([]SourceDefinition, error) {
 
 	// Decode JSON
 	err := json.NewDecoder(r).Decode(&sourceDefinitions)
-	return sourceDefinitions.SourceDefinitions, fmt.Errorf("could not decode JSON: %w", err)
+	return sourceDefinitions.SourceDefinitions, err
 }
 
 // SourceDefinitionSpecificationFromJSON reads json data from a Reader and returns a source definition specification
@@ -42,5 +41,5 @@ func SourceDefinitionSpecificationFromJSON(r io.Reader) (*SourceDefinitionSpecif
 	sourceDefinitionSpecification := new(SourceDefinitionSpecification)
 	err := json.NewDecoder(r).Decode(sourceDefinitionSpecification)
 
-	return sourceDefinitionSpecification, fmt.Errorf("could not decode JSON: %w", err)
+	return sourceDefinitionSpecification, err
 }

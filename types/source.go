@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 
 	"github.com/google/uuid"
@@ -22,7 +21,7 @@ func SourceFromJSON(r io.Reader) (*Source, error) {
 	source := new(Source)
 	err := json.NewDecoder(r).Decode(source)
 
-	return source, fmt.Errorf("could not decode JSON: %w", err)
+	return source, err
 }
 
 // SourcesFromJSON reads json data from a Reader and returns a slice of sources
@@ -33,5 +32,5 @@ func SourcesFromJSON(r io.Reader) ([]Source, error) {
 
 	// Decode JSON
 	err := json.NewDecoder(r).Decode(&sources)
-	return sources.Sources, fmt.Errorf("could not decode JSON: %w", err)
+	return sources.Sources, err
 }

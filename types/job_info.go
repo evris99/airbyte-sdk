@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/google/uuid"
@@ -43,8 +42,6 @@ func (a *ConfigTypeEnum) UnmarshalJSON(b []byte) error {
 		*a = Sync
 	case "reset_connection":
 		*a = ResetConnection
-	default:
-		return fmt.Errorf("unknown config type")
 	}
 
 	return nil
@@ -66,8 +63,6 @@ func (a ConfigTypeEnum) MarshalJSON() ([]byte, error) {
 		s = "sync"
 	case ResetConnection:
 		s = "reset_connection"
-	default:
-		return nil, fmt.Errorf("unknown config type")
 	}
 
 	return json.Marshal(s)

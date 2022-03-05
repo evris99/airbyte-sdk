@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -31,8 +30,6 @@ func (r *ReleaseStage) UnmarshalJSON(b []byte) error {
 		*r = GenerallyAvailable
 	case "custom":
 		*r = Custom
-	default:
-		return fmt.Errorf("unknown release stage")
 	}
 
 	return nil
@@ -50,8 +47,6 @@ func (r ReleaseStage) MarshalJSON() ([]byte, error) {
 		s = "generally_available"
 	case Custom:
 		s = "custom"
-	default:
-		return nil, fmt.Errorf("unknown release stage")
 	}
 
 	return json.Marshal(s)
@@ -83,8 +78,6 @@ func (a *AuthenticationType) UnmarshalJSON(b []byte) error {
 	switch strings.ToLower(s) {
 	case "oath2.0":
 		*a = OAuth
-	default:
-		return fmt.Errorf("unknown authentication type")
 	}
 
 	return nil
@@ -96,8 +89,6 @@ func (a AuthenticationType) MarshalJSON() ([]byte, error) {
 	switch a {
 	case OAuth:
 		s = "oath2.0"
-	default:
-		return nil, fmt.Errorf("unknown authentication type")
 	}
 
 	return json.Marshal(s)
@@ -133,8 +124,6 @@ func (a *AuthFlowType) UnmarshalJSON(b []byte) error {
 		*a = OAuth2
 	case "oath1.0":
 		*a = OAuth1
-	default:
-		return fmt.Errorf("unknown auth flow type")
 	}
 
 	return nil
@@ -148,8 +137,6 @@ func (a AuthFlowType) MarshalJSON() ([]byte, error) {
 		s = "oath2.0"
 	case OAuth1:
 		s = "oath1.0"
-	default:
-		return nil, fmt.Errorf("unknown auth flow type")
 	}
 
 	return json.Marshal(s)

@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 
@@ -28,8 +27,6 @@ func (su *SupportedSyncModesEnum) UnmarshalJSON(b []byte) error {
 		*su = FullRefresh
 	case "incremental":
 		*su = Incremental
-	default:
-		return fmt.Errorf("unknown sync mode")
 	}
 
 	return nil
@@ -43,8 +40,6 @@ func (su SupportedSyncModesEnum) MarshalJSON() ([]byte, error) {
 		s = "full_refresh"
 	case Incremental:
 		s = "incremental"
-	default:
-		return nil, fmt.Errorf("unknown sync mode")
 	}
 
 	return json.Marshal(s)
@@ -104,8 +99,6 @@ func (t *TimeUnit) UnmarshalJSON(b []byte) error {
 		*t = Weeks
 	case "months":
 		*t = Months
-	default:
-		return fmt.Errorf("unknown time unit")
 	}
 
 	return nil
@@ -125,8 +118,6 @@ func (t TimeUnit) MarshalJSON() ([]byte, error) {
 		s = "weeks"
 	case Months:
 		s = "months"
-	default:
-		return nil, fmt.Errorf("unknown time unit")
 	}
 
 	return json.Marshal(s)
@@ -159,8 +150,6 @@ func (c *ConnectionStatus) UnmarshalJSON(b []byte) error {
 		*c = Inactive
 	case "deprecated":
 		*c = Deprecated
-	default:
-		return fmt.Errorf("unknown connection status")
 	}
 
 	return nil
@@ -176,8 +165,6 @@ func (c ConnectionStatus) MarshalJSON() ([]byte, error) {
 		s = "inactive"
 	case Deprecated:
 		s = "deprecated"
-	default:
-		return nil, fmt.Errorf("unknown connection status")
 	}
 
 	return json.Marshal(s)
@@ -209,7 +196,7 @@ type Connection struct {
 func ConnectionFromJSON(r io.Reader) (*Connection, error) {
 	conn := new(Connection)
 	err := json.NewDecoder(r).Decode(conn)
-	return conn, fmt.Errorf("could not decode JSON: %w", err)
+	return conn, err
 }
 
 // ConnectionsToJSON reads json data from a Reader and returns a slice of connections
@@ -220,5 +207,5 @@ func ConnectionsFromJSON(r io.Reader) ([]Connection, error) {
 
 	// Decode JSON
 	err := json.NewDecoder(r).Decode(&connections)
-	return connections.Connections, fmt.Errorf("could not decode JSON: %w", err)
+	return connections.Connections, err
 }

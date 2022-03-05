@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 
@@ -26,8 +25,6 @@ func (n *NotificationType) UnmarshalJSON(b []byte) error {
 	switch strings.ToLower(s) {
 	case "slack":
 		*n = Slack
-	default:
-		return fmt.Errorf("unknown notification type")
 	}
 
 	return nil
@@ -39,8 +36,6 @@ func (n NotificationType) MarshalJSON() ([]byte, error) {
 	switch n {
 	case Slack:
 		s = "slack"
-	default:
-		return nil, fmt.Errorf("unknown notification type")
 	}
 
 	return json.Marshal(s)
@@ -81,7 +76,7 @@ func WorkspaceFromJSON(r io.Reader) (*Workspace, error) {
 	workspace := new(Workspace)
 	err := json.NewDecoder(r).Decode(workspace)
 
-	return workspace, fmt.Errorf("could not decode JSON: %w", err)
+	return workspace, err
 }
 
 // WorkspacesFromJSON reads json data from a Reader and returns a slice of workspaces
@@ -92,5 +87,5 @@ func WorkspacesFromJSON(r io.Reader) ([]Workspace, error) {
 
 	// Decode JSON
 	err := json.NewDecoder(r).Decode(&workspaces)
-	return workspaces.Workspaces, fmt.Errorf("could not decode JSON: %w", err)
+	return workspaces.Workspaces, err
 }

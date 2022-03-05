@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 
@@ -36,8 +35,6 @@ func (sup *SupportedDestinationSyncModesType) UnmarshalJSON(b []byte) error {
 		*sup = Overwrite
 	case "append_dedup":
 		*sup = AppendDedup
-	default:
-		return fmt.Errorf("unknown auth flow type")
 	}
 
 	return nil
@@ -53,8 +50,6 @@ func (sup SupportedDestinationSyncModesType) MarshalJSON() ([]byte, error) {
 		s = "overwrite"
 	case AppendDedup:
 		s = "append_dedup"
-	default:
-		return nil, fmt.Errorf("unknown auth flow type")
 	}
 
 	return json.Marshal(s)
@@ -72,7 +67,7 @@ type DestinationDefinitionSpecification struct {
 func DestinationDefinitionFromJSON(r io.Reader) (*DestinationDefinition, error) {
 	destinationDef := new(DestinationDefinition)
 	err := json.NewDecoder(r).Decode(destinationDef)
-	return destinationDef, fmt.Errorf("could not decode JSON: %w", err)
+	return destinationDef, err
 }
 
 // DestinationDefinitionsFromJSON reads json data from a Reader and returns a slice of destinations definitions
@@ -83,12 +78,12 @@ func DestinationDefinitionsFromJSON(r io.Reader) ([]DestinationDefinition, error
 
 	// Decode JSON
 	err := json.NewDecoder(r).Decode(&destinationDefs)
-	return destinationDefs.DestinationDefinitions, fmt.Errorf("could not decode JSON: %w", err)
+	return destinationDefs.DestinationDefinitions, err
 }
 
 // DestinationDefinitionSpecificationFromJSON reads json data from a Reader and returns a destination definition specification
 func DestinationDefinitionSpecificationToJSON(r io.Reader) (*DestinationDefinitionSpecification, error) {
 	destinationDefSpec := new(DestinationDefinitionSpecification)
 	err := json.NewDecoder(r).Decode(destinationDefSpec)
-	return destinationDefSpec, fmt.Errorf("could not decode JSON: %w", err)
+	return destinationDefSpec, err
 }

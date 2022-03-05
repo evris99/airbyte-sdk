@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 
 	"github.com/google/uuid"
@@ -21,7 +20,8 @@ type Destination struct {
 func DestinationFromJSON(r io.Reader) (*Destination, error) {
 	destination := new(Destination)
 	err := json.NewDecoder(r).Decode(destination)
-	return destination, fmt.Errorf("could not decode JSON: %w", err)
+
+	return destination, err
 }
 
 // DestinationsFromJSON reads json data from a Reader and returns a slice of destinations
@@ -32,5 +32,5 @@ func DestinationsFromJSON(r io.Reader) ([]Destination, error) {
 
 	// Decode JSON
 	err := json.NewDecoder(r).Decode(&destinations)
-	return destinations.Destinations, fmt.Errorf("could not decode JSON: %w", err)
+	return destinations.Destinations, err
 }

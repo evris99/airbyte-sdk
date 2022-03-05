@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 )
@@ -26,8 +25,6 @@ func (st *StatusType) UnmarshalJSON(b []byte) error {
 		*st = Succeeded
 	case "failed":
 		*st = Failed
-	default:
-		return fmt.Errorf("unknown status")
 	}
 
 	return nil
@@ -41,8 +38,6 @@ func (st StatusType) MarshalJSON() ([]byte, error) {
 		s = "succeeded"
 	case Failed:
 		s = "failed"
-	default:
-		return nil, fmt.Errorf("unknown status")
 	}
 
 	return json.Marshal(s)
@@ -59,5 +54,5 @@ func ConnectionCheckFromJSON(r io.Reader) (*ConnectionCheck, error) {
 	connCheck := new(ConnectionCheck)
 	err := json.NewDecoder(r).Decode(connCheck)
 
-	return connCheck, fmt.Errorf("could not decode JSON: %w", err)
+	return connCheck, err
 }

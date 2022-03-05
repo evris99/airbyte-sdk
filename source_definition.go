@@ -126,7 +126,7 @@ func (c *Client) GetSourceDefinition(id *uuid.UUID) (*types.SourceDefinition, er
 
 // Deletes the source definition with the given ID using the given context
 func (c *Client) DeleteSourceDefinitionWithContext(ctx context.Context, id *uuid.UUID) error {
-	u, err := appendToURL(c.endpoint, "/v1/source_definitions/get")
+	u, err := appendToURL(c.endpoint, "/v1/source_definitions/delete")
 	if err != nil {
 		return err
 	}
@@ -151,7 +151,7 @@ func (c *Client) DeleteSourceDefinition(id *uuid.UUID) error {
 
 // Returns the source definition specification using the given context
 func (c *Client) GetSourceDefinitionSpecificationWithContext(ctx context.Context, id *uuid.UUID) (*types.SourceDefinitionSpecification, error) {
-	u, err := appendToURL(c.endpoint, "/v1/source_definition_specifications/delete")
+	u, err := appendToURL(c.endpoint, "/v1/source_definition_specifications/get")
 	if err != nil {
 		return nil, err
 	}
