@@ -1,6 +1,7 @@
 package airbytesdk
 
 import (
+	"context"
 	"testing"
 
 	"github.com/evris99/airbyte-sdk/types"
@@ -19,13 +20,13 @@ func TestListWorkspace(t *testing.T) {
 		AnonymousDataCollection: false,
 	}
 
-	new, err := airbyte.CreateWorkspace(workspace)
+	new, err := airbyte.CreateWorkspace(context.Background(), workspace)
 	if err != nil {
 		t.Fatalf("could not create workspace: %v", err)
 	}
 
 	// Get all workspaces
-	workspaces, err := airbyte.ListWorkspaces()
+	workspaces, err := airbyte.ListWorkspaces(context.Background())
 	if err != nil {
 		t.Fatalf("could not list workspaces: %v", err)
 	}
@@ -44,7 +45,7 @@ func TestListWorkspace(t *testing.T) {
 	}
 
 	// Delete workspace
-	if err := airbyte.DeleteWorkspace(new.WorkspaceId); err != nil {
+	if err := airbyte.DeleteWorkspace(context.Background(), new.WorkspaceId); err != nil {
 		t.Fatalf("could not delete workspace: %v", err)
 	}
 }
@@ -62,13 +63,13 @@ func TestFindWorkspace(t *testing.T) {
 	}
 
 	// Create new workspace
-	new, err := airbyte.CreateWorkspace(workspace)
+	new, err := airbyte.CreateWorkspace(context.Background(), workspace)
 	if err != nil {
 		t.Fatalf("could not create workspace: %v", err)
 	}
 
 	// Find new workspace by ID
-	idWorkspace, err := airbyte.FindWorkspaceByID(new.WorkspaceId)
+	idWorkspace, err := airbyte.FindWorkspaceByID(context.Background(), new.WorkspaceId)
 	if err != nil {
 		t.Fatalf("could not find workspace by ID: %v", err)
 	}
@@ -78,7 +79,7 @@ func TestFindWorkspace(t *testing.T) {
 	}
 
 	// Find new workspace by slug
-	slugWorkspace, err := airbyte.FindWorkspaceBySlug(new.Slug)
+	slugWorkspace, err := airbyte.FindWorkspaceBySlug(context.Background(), new.Slug)
 	if err != nil {
 		t.Fatalf("could not find workspace by slug: %v", err)
 	}
@@ -88,7 +89,7 @@ func TestFindWorkspace(t *testing.T) {
 	}
 
 	// Delete workspace
-	if err := airbyte.DeleteWorkspace(slugWorkspace.WorkspaceId); err != nil {
+	if err := airbyte.DeleteWorkspace(context.Background(), slugWorkspace.WorkspaceId); err != nil {
 		t.Fatalf("could not delete workspace: %v", err)
 	}
 }
@@ -106,7 +107,7 @@ func TestUpdateWorkspace(t *testing.T) {
 		AnonymousDataCollection: false,
 	}
 
-	new, err := airbyte.CreateWorkspace(workspace)
+	new, err := airbyte.CreateWorkspace(context.Background(), workspace)
 	if err != nil {
 		t.Fatalf("could not create workspace: %v", err)
 	}
@@ -120,7 +121,7 @@ func TestUpdateWorkspace(t *testing.T) {
 		SecurityUpdates:         true,
 	}
 
-	updatedWorkspace, err := airbyte.UpdateWorkspaceState(update)
+	updatedWorkspace, err := airbyte.UpdateWorkspaceState(context.Background(), update)
 
 	if err != nil {
 		t.Fatalf("could not update workspace state: %v", err)
@@ -131,7 +132,7 @@ func TestUpdateWorkspace(t *testing.T) {
 	}
 
 	// Update workspace name
-	updatedNameWorkspace, err := airbyte.UpdateWorkspaceName(updatedWorkspace.WorkspaceId, "changed")
+	updatedNameWorkspace, err := airbyte.UpdateWorkspaceName(context.Background(), updatedWorkspace.WorkspaceId, "changed")
 	if err != nil {
 		t.Fatalf("could not update workspace name: %v", err)
 	}
@@ -141,12 +142,12 @@ func TestUpdateWorkspace(t *testing.T) {
 	}
 
 	// Update workspace feedback state
-	if err := airbyte.UpdateWorkspaceFeedbackState(updatedNameWorkspace.WorkspaceId); err != nil {
+	if err := airbyte.UpdateWorkspaceFeedbackState(context.Background(), updatedNameWorkspace.WorkspaceId); err != nil {
 		t.Fatalf("could not update workspace feedback state: %v", err)
 	}
 
 	// Delete workspace
-	if err := airbyte.DeleteWorkspace(updatedNameWorkspace.WorkspaceId); err != nil {
+	if err := airbyte.DeleteWorkspace(context.Background(), updatedNameWorkspace.WorkspaceId); err != nil {
 		t.Fatalf("could not delete workspace: %v", err)
 	}
 }

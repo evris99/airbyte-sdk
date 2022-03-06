@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
-// Create a new destination using the given context
-func (c *Client) CreateDestinationWithContext(ctx context.Context, dest *types.Destination) (*types.Destination, error) {
+// CreateDestination creates a new destination
+func (c *Client) CreateDestination(ctx context.Context, dest *types.Destination) (*types.Destination, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/create")
 	if err != nil {
 		return nil, err
@@ -23,14 +23,8 @@ func (c *Client) CreateDestinationWithContext(ctx context.Context, dest *types.D
 	return types.DestinationFromJSON(res.Body)
 }
 
-// Create a new destination.
-// Equivalent with calling CreateDestinationWithContext with background as context
-func (c *Client) CreateDestination(dest *types.Destination) (*types.Destination, error) {
-	return c.CreateDestinationWithContext(context.Background(), dest)
-}
-
-// Update a destination using the given context
-func (c *Client) UpdateDestinationWithContext(ctx context.Context, dest *types.Destination) (*types.Destination, error) {
+// UpdateDestination updates a destination
+func (c *Client) UpdateDestination(ctx context.Context, dest *types.Destination) (*types.Destination, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/update")
 	if err != nil {
 		return nil, err
@@ -45,14 +39,8 @@ func (c *Client) UpdateDestinationWithContext(ctx context.Context, dest *types.D
 	return types.DestinationFromJSON(res.Body)
 }
 
-// Update a destination.
-// Equivalent with calling updateDestinationWithContext with background as context
-func (c *Client) UpdateDestination(dest *types.Destination) (*types.Destination, error) {
-	return c.UpdateDestinationWithContext(context.Background(), dest)
-}
-
-// Returns all the destinations in the workspace with the give ID using the given context
-func (c *Client) ListWorkspaceDestinationsWithContext(ctx context.Context, workspaceID *uuid.UUID) ([]types.Destination, error) {
+// ListWorkspaceDestinations returns all the destinations in the workspace with the given ID
+func (c *Client) ListWorkspaceDestinations(ctx context.Context, workspaceID *uuid.UUID) ([]types.Destination, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/list")
 	if err != nil {
 		return nil, err
@@ -70,14 +58,8 @@ func (c *Client) ListWorkspaceDestinationsWithContext(ctx context.Context, works
 	return types.DestinationsFromJSON(res.Body)
 }
 
-// Returns all the destinations in the workspace with the give ID.
-// Equivalent with calling ListWorkspaceDestinationsWithContext with background as context
-func (c *Client) ListWorkspaceDestinations(workspaceID *uuid.UUID) ([]types.Destination, error) {
-	return c.ListWorkspaceDestinationsWithContext(context.Background(), workspaceID)
-}
-
-// Returns a destination with the given ID using the given context
-func (c *Client) GetDestinationWithContext(ctx context.Context, id *uuid.UUID) (*types.Destination, error) {
+// GetDestination returns the destination with the given ID
+func (c *Client) GetDestination(ctx context.Context, id *uuid.UUID) (*types.Destination, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/get")
 	if err != nil {
 		return nil, err
@@ -95,14 +77,8 @@ func (c *Client) GetDestinationWithContext(ctx context.Context, id *uuid.UUID) (
 	return types.DestinationFromJSON(res.Body)
 }
 
-// Returns a destination with the given ID.
-// Equivalent with calling GetDestinationWithContext with background as context
-func (c *Client) GetDestination(id *uuid.UUID) (*types.Destination, error) {
-	return c.GetDestinationWithContext(context.Background(), id)
-}
-
-// Searches for the given destination using the given context
-func (c *Client) SearchDestinationWithContext(ctx context.Context, dest *types.Destination) (*types.Destination, error) {
+// SearchDestination searches for the given destination
+func (c *Client) SearchDestination(ctx context.Context, dest *types.Destination) (*types.Destination, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/search")
 	if err != nil {
 		return nil, err
@@ -117,14 +93,8 @@ func (c *Client) SearchDestinationWithContext(ctx context.Context, dest *types.D
 	return types.DestinationFromJSON(res.Body)
 }
 
-// Searches for the given destination.
-// Equivalent with calling SearchDestinationWithContext with background as context
-func (c *Client) SearchDestination(dest *types.Destination) (*types.Destination, error) {
-	return c.SearchDestinationWithContext(context.Background(), dest)
-}
-
-// Makes a copy of the destination with the given ID using the given context
-func (c *Client) CloneDestinationWithContext(ctx context.Context, id *uuid.UUID) (*types.Destination, error) {
+// CloneDestination makes a copy of the destination with the given ID
+func (c *Client) CloneDestination(ctx context.Context, id *uuid.UUID) (*types.Destination, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/clone")
 	if err != nil {
 		return nil, err
@@ -142,14 +112,8 @@ func (c *Client) CloneDestinationWithContext(ctx context.Context, id *uuid.UUID)
 	return types.DestinationFromJSON(res.Body)
 }
 
-// Makes a copy of the destination with the given ID.
-// Equivalent with calling CloneDestinationWithContext with background as context
-func (c *Client) CloneDestination(id *uuid.UUID) (*types.Destination, error) {
-	return c.CloneDestinationWithContext(context.Background(), id)
-}
-
-// Deletes a destination with the given ID using the given context
-func (c *Client) DeleteDestinationWithContext(ctx context.Context, id *uuid.UUID) error {
+// DeleteDestination deletes a destination with the given ID
+func (c *Client) DeleteDestination(ctx context.Context, id *uuid.UUID) error {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/delete")
 	if err != nil {
 		return err
@@ -167,14 +131,8 @@ func (c *Client) DeleteDestinationWithContext(ctx context.Context, id *uuid.UUID
 	return nil
 }
 
-// Deletes a destination with the given ID.
-// Equivalent with calling DeleteDestinationWithContext with background as context
-func (c *Client) DeleteDestination(id *uuid.UUID) error {
-	return c.DeleteSourceWithContext(context.Background(), id)
-}
-
-// Checks the connection to the destination with the given ID using the given context
-func (c *Client) CheckDestinationConnectionWithContext(ctx context.Context, id *uuid.UUID) (*types.ConnectionCheck, error) {
+// CheckDestinationConnection checks the connection to the destination with the given ID
+func (c *Client) CheckDestinationConnection(ctx context.Context, id *uuid.UUID) (*types.ConnectionCheck, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/check_connection")
 	if err != nil {
 		return nil, err
@@ -192,14 +150,8 @@ func (c *Client) CheckDestinationConnectionWithContext(ctx context.Context, id *
 	return types.ConnectionCheckFromJSON(res.Body)
 }
 
-// Checks the connection to the destination with the given ID.
-// Equivalent with calling CheckDestinationConnectionWithContext with background as context
-func (c *Client) CheckDestinationConnection(id *uuid.UUID) (*types.ConnectionCheck, error) {
-	return c.CheckDestinationConnectionWithContext(context.Background(), id)
-}
-
-// Checks the connection to the destination with the given ID for updates using the given context
-func (c *Client) CheckDestinationConnectionUpdateWithContext(ctx context.Context, dest *types.Destination) (*types.ConnectionCheck, error) {
+// CheckDestinationConnectionUpdate checks the connection to the destination with the given ID for updates
+func (c *Client) CheckDestinationConnectionUpdate(ctx context.Context, dest *types.Destination) (*types.ConnectionCheck, error) {
 	u, err := appendToURL(c.endpoint, "/v1/destinations/check_connection_for_update")
 	if err != nil {
 		return nil, err
@@ -212,10 +164,4 @@ func (c *Client) CheckDestinationConnectionUpdateWithContext(ctx context.Context
 	defer res.Body.Close()
 
 	return types.ConnectionCheckFromJSON(res.Body)
-}
-
-// Checks the connection to the destination with the given ID for updates.
-// Equivalent with calling CheckDestinationConnectionUpdateWithContext with background as context
-func (c *Client) CheckDestinationConnectionUpdate(dest *types.Destination) (*types.ConnectionCheck, error) {
-	return c.CheckDestinationConnectionUpdateWithContext(context.Background(), dest)
 }

@@ -1,6 +1,7 @@
 package airbytesdk
 
 import (
+	"context"
 	"testing"
 
 	"github.com/evris99/airbyte-sdk/types"
@@ -21,22 +22,22 @@ func TestSourceDefinitions(t *testing.T) {
 		},
 	}
 
-	new, err := airbyte.CreateSourceDefinition(sourceDefinition)
+	new, err := airbyte.CreateSourceDefinition(context.Background(), sourceDefinition)
 	if err != nil {
 		t.Fatalf("could not create source definition: %v", err)
 	}
 
-	_, err = airbyte.ListSourceDefinitions()
+	_, err = airbyte.ListSourceDefinitions(context.Background())
 	if err != nil {
 		t.Fatalf("could not get all source definitions: %v", err)
 	}
 
-	_, err = airbyte.ListLatestSourceDefinitions()
+	_, err = airbyte.ListLatestSourceDefinitions(context.Background())
 	if err != nil {
 		t.Fatalf("could not get latest source definitions: %v", err)
 	}
 
-	found, err := airbyte.GetSourceDefinition(new.SourceDefinitionId)
+	found, err := airbyte.GetSourceDefinition(context.Background(), new.SourceDefinitionId)
 	if err != nil {
 		t.Fatalf("could not get newly created source definition: %v", err)
 	}
@@ -45,7 +46,7 @@ func TestSourceDefinitions(t *testing.T) {
 		t.Fatal("got incorrect ID")
 	}
 
-	if err := airbyte.DeleteSourceDefinition(found.SourceDefinitionId); err != nil {
+	if err := airbyte.DeleteSourceDefinition(context.Background(), found.SourceDefinitionId); err != nil {
 		t.Fatalf("could not delete source definition: %v", err)
 	}
 }
