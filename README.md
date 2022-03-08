@@ -17,7 +17,7 @@ go get -u github.com/evris99/airbyte-sdk
 
 An example that creates a new workspace, destination and source. The source uses the OpenAPI connector and the destination uses the local JSON file connector. Then it creates a connection between them with the name "Test Connection".
 
-```
+```go
 package main
 
 import (
