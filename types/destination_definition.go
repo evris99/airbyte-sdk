@@ -16,7 +16,7 @@ type DestinationDefinition struct {
 type SupportedDestinationSyncModesType int
 
 const (
-	Append SupportedDestinationSyncModesType = iota
+	Append SupportedDestinationSyncModesType = iota + 1
 	Overwrite
 	AppendDedup
 )
@@ -73,7 +73,7 @@ func DestinationDefinitionFromJSON(r io.Reader) (*DestinationDefinition, error) 
 // DestinationDefinitionsFromJSON reads json data from a Reader and returns a slice of destinations definitions
 func DestinationDefinitionsFromJSON(r io.Reader) ([]DestinationDefinition, error) {
 	var destinationDefs struct {
-		DestinationDefinitions []DestinationDefinition `json:"destinationsDefinitions"`
+		DestinationDefinitions []DestinationDefinition `json:"destinationDefinitions"`
 	}
 
 	// Decode JSON

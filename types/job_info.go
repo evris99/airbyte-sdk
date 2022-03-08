@@ -14,7 +14,7 @@ type Logs struct {
 type ConfigTypeEnum int
 
 const (
-	CheckConnectionSource ConfigTypeEnum = iota
+	CheckConnectionSource ConfigTypeEnum = iota + 1
 	CheckConnectionDestination
 	DiscoverSchema
 	GetSpec

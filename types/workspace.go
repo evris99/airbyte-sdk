@@ -12,7 +12,7 @@ import (
 type NotificationType int
 
 const (
-	Slack NotificationType = iota
+	Slack NotificationType = iota + 1
 )
 
 // Unmarshaler for json

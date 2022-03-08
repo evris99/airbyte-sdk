@@ -9,7 +9,7 @@ import (
 type StatusType int
 
 const (
-	Succeeded StatusType = iota
+	Succeeded StatusType = iota + 1
 	Failed
 )
 

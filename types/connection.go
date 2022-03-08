@@ -11,7 +11,7 @@ import (
 type SupportedSyncModesEnum int
 
 const (
-	FullRefresh SupportedSyncModesEnum = iota
+	FullRefresh SupportedSyncModesEnum = iota + 1
 	Incremental
 )
 
@@ -74,7 +74,7 @@ type SyncCatalogType struct {
 type TimeUnit int
 
 const (
-	Minutes TimeUnit = iota
+	Minutes TimeUnit = iota + 1
 	Hours
 	Days
 	Weeks
@@ -131,7 +131,7 @@ type Schedule struct {
 type ConnectionStatus int
 
 const (
-	Active ConnectionStatus = iota
+	Active ConnectionStatus = iota + 1
 	Inactive
 	Deprecated
 )
@@ -185,10 +185,10 @@ type Connection struct {
 	Prefix               string                `json:"prefix,omitempty"`
 	SourceID             *uuid.UUID            `json:"sourceId,omitempty"`
 	DestinationId        *uuid.UUID            `json:"destinationId,omitempty"`
-	OperationIds         []uuid.UUID           `json:"operationIds"`
+	OperationIds         []uuid.UUID           `json:"operationIds,omitempty"`
 	SyncCatalog          *SyncCatalogType      `json:"syncCatalog,omitempty"`
 	Schedule             *Schedule             `json:"schedule,omitempty"`
-	Status               StatusType            `json:"status,omitempty"`
+	Status               ConnectionStatus      `json:"status,omitempty"`
 	ResourceRequirements *ResourceRequirements `json:"resourceRequirements,omitempty"`
 }
 

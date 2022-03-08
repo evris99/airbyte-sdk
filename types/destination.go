@@ -8,12 +8,12 @@ import (
 )
 
 type Destination struct {
-	DestinationId           *uuid.UUID  `json:"destinationId,omitempty"`
-	DestinationDefinitionId *uuid.UUID  `json:"destinationDefinitionId,omitempty"`
-	WorkspaceId             *uuid.UUID  `json:"workspaceId,omitempty"`
-	ConnectionConfiguration interface{} `json:"connectionConfiguration,omitempty"`
-	Name                    string      `json:"name,omitempty"`
-	DestinationName         string      `json:"destinationName,omitempty"`
+	DestinationId           *uuid.UUID             `json:"destinationId,omitempty"`
+	DestinationDefinitionId *uuid.UUID             `json:"destinationDefinitionId,omitempty"`
+	WorkspaceId             *uuid.UUID             `json:"workspaceId,omitempty"`
+	ConnectionConfiguration map[string]interface{} `json:"connectionConfiguration,omitempty"`
+	Name                    string                 `json:"name,omitempty"`
+	DestinationName         string                 `json:"destinationName,omitempty"`
 }
 
 // DestinationFromJSON reads json data from a Reader and returns a destination

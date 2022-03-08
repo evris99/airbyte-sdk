@@ -8,7 +8,7 @@ import (
 type ReleaseStage int
 
 const (
-	Alpha ReleaseStage = iota
+	Alpha ReleaseStage = iota + 1
 	Beta
 	GenerallyAvailable
 	Custom
@@ -65,7 +65,7 @@ type Definition struct {
 type AuthenticationType int
 
 const (
-	OAuth AuthenticationType = iota
+	OAuth AuthenticationType = iota + 1
 )
 
 // Unmarshaler for json
@@ -108,7 +108,7 @@ type AuthSpecification struct {
 type AuthFlowType int
 
 const (
-	OAuth2 AuthFlowType = iota
+	OAuth2 AuthFlowType = iota + 1
 	OAuth1
 )
 

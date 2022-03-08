@@ -8,12 +8,12 @@ import (
 )
 
 type Source struct {
-	SourceId                *uuid.UUID  `json:"sourceId,omitempty"`
-	SourceDefinitionId      *uuid.UUID  `json:"sourceDefinitionId,omitempty"`
-	WorkspaceId             *uuid.UUID  `json:"workspaceId,omitempty"`
-	ConnectionConfiguration interface{} `json:"connectionConfiguration,omitempty"`
-	Name                    string      `json:"name,omitempty"`
-	SourceName              string      `json:"sourceName,omitempty"`
+	SourceId                *uuid.UUID             `json:"sourceId,omitempty"`
+	SourceDefinitionId      *uuid.UUID             `json:"sourceDefinitionId,omitempty"`
+	WorkspaceId             *uuid.UUID             `json:"workspaceId,omitempty"`
+	ConnectionConfiguration map[string]interface{} `json:"connectionConfiguration,omitempty"`
+	Name                    string                 `json:"name,omitempty"`
+	SourceName              string                 `json:"sourceName,omitempty"`
 }
 
 // SourceFromJSON reads json data from a Reader and returns a source
